@@ -17,11 +17,11 @@ PHONE_NUMBER = os.getenv("PHONE_NUMBER")
 
 def get_google_calendar():
     scopes = ["https://www.googleapis.com/auth/cloud-platform.read-only"]
-    creds_file = "credentials.json"
+    creds_file = 'credentials.json'
 
-    creds = service_account.Credentials.from_service_account(
+    creds = service_account.Credentials.from_service_account_file(
         creds_file,
-        scopes
+        scopes = scopes
     )
 
     service = build(
@@ -34,9 +34,9 @@ def get_google_calendar():
 
 
 def get_events(calendar_service):
-    est = pytz.timezone('America/New York')
-    now = datetime.now(est)
-    end_of_day = datetime(now.year, now.month, now.day, 23, 0, 0)
+    est = pytz.timezone('America/New_York')
+    now = datetime.datetime.now(est)
+    end_of_day = datetime.datetime(now.year, now.month, now.day, 23, 0, 0)
 
     events_result = calendar_service.events().list(
         calendarId = 'primary',
@@ -52,6 +52,7 @@ def get_events(calendar_service):
     )
 
     return events
+
 
 def text_schedule(schedule):
     TWILIO_SID = SID
@@ -83,7 +84,8 @@ def main():
    schedule = get_events(cal_service)
    text_schedule(schedule)
 
-
+if __name__ == '__main__':
+    main()
 
 
 
