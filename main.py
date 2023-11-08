@@ -3,6 +3,17 @@ from googleapiclient.discovery import build
 import pytz 
 import datetime
 from twilio.rest import Client
+import os 
+from dotenv import load_dotenv
+
+
+load_dotenv()
+#environment variables 
+SID = os.getenv("SID") 
+AUTH_TOKEN = os.getenv("AUTH_TOKEN")
+TWILIO_NUMBER = os.getenv("TWILIO_NUMBER")
+PHONE_NUMBER = os.getenv("PHONE_NUMBER")
+
 
 def get_google_calendar():
     scopes = ["https://www.googleapis.com/auth/cloud-platform.read-only"]
@@ -43,10 +54,10 @@ def get_events(calendar_service):
     return events
 
 def text_schedule(schedule):
-    TWILIO_SID = 'TWILIO_SID'
-    TWILIO_AUTH_TOKEN = 'AUTH_TOKEN'
-    TWILIO_PHONE_NUMBER = 'PHONE'
-    RECIPIENT_PHONE_NUMBER = 'PHONE'
+    TWILIO_SID = SID
+    TWILIO_AUTH_TOKEN = AUTH_TOKEN
+    TWILIO_PHONE_NUMBER = TWILIO_NUMBER
+    RECIPIENT_PHONE_NUMBER = PHONE_NUMBER
 
     client = Client(TWILIO_SID, TWILIO_AUTH_TOKEN)
 
