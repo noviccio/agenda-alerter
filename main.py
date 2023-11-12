@@ -16,7 +16,7 @@ PHONE_NUMBER = os.getenv("PHONE_NUMBER")
 
 
 def get_google_calendar():
-    scopes = ["https://www.googleapis.com/auth/cloud-platform.read-only"]
+    scopes = ["https://www.googleapis.com/auth/calendar.readonly"]
     creds_file = 'credentials.json'
 
     creds = service_account.Credentials.from_service_account_file(
@@ -53,6 +53,33 @@ def get_events(calendar_service):
 
     return events
 
+def get_today_events(calendar_service):
+    try:
+        est = pytz.timezone('America/New_York')
+        now = datetime.datetime.now(est)
+        start_of_day = datetime.datetime(now.year, now.month, now.day, 0, 0, 0, tzinfo=est)
+        end_of_day = datetime.datetime(now.year, now.month, now.day, 23, 59, 59, tzinfo=est)
+
+        events_result = calendar_service.events().list(
+            calendarId= 'mnovicio2001@gmail.com',
+            timeMin=start_of_day.isoformat(),
+            timeMax=end_of_day.isoformat(),
+            singleEvents=True,
+            orderBy='startTime'
+        ).execute()
+
+        events = events_result.get('items', [])
+        if not events:
+            print('No events found for today.')
+        else:
+            print('Events for today:')
+            for event in events:
+                start = event['start'].get('dateTime', event['start'].get('date'))
+                print(f"{start}: {event['summary']}")
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
 
 def text_schedule(schedule):
     TWILIO_SID = SID
@@ -72,11 +99,12 @@ def text_schedule(schedule):
             event_summary = event['summary']
             message = f"{start_time} - {end_time}: {event_summary}\n"
 
-            message = client.messages.create(
-                body=message,
-                from_=TWILIO_PHONE_NUMBER,
-                to=RECIPIENT_PHONE_NUMBER
-            )
+    message = client.messages.create(
+        body=message,
+        from_=TWILIO_PHONE_NUMBER,
+        to=RECIPIENT_PHONE_NUMBER
+    )
+
 
 
 def main():
@@ -85,7 +113,11 @@ def main():
    text_schedule(schedule)
 
 if __name__ == '__main__':
-    main()
+    cal_service = get_google_calendar()
+    get_today_events(cal_service)
+    
+
+    
 
 
 
