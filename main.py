@@ -36,12 +36,13 @@ def get_google_calendar():
 def get_events(calendar_service):
     est = pytz.timezone('America/New_York')
     now = datetime.datetime.now(est)
-    end_of_day = datetime.datetime(now.year, now.month, now.day, 23, 0, 0)
+    start_of_day = datetime.datetime(now.year, now.month, now.day, 0, 0, 0, tzinfo=est)
+    end_of_day = datetime.datetime(now.year, now.month, now.day, 23, 59, 59, tzinfo=est)
 
     events_result = calendar_service.events().list(
-        calendarId = 'primary',
-        timeMin=now.isoformat(),
-        timeMax=end_of_day.isoformat(),
+        calendarId = 'mnovicio2001@gmail.com',
+        timeMin= start_of_day.isoformat(),
+        timeMax= end_of_day.isoformat(),
         singleEvents=True,
         orderBy='startTime'
     ).execute()
@@ -90,14 +91,15 @@ def text_schedule(schedule):
     client = Client(TWILIO_SID, TWILIO_AUTH_TOKEN)
 
     if not schedule:
-        message = "You have no events scheduled for today."
+          message = "You have no events scheduled for today."
     else:
-        message = "Your schedule for today:\n"
-        for event in schedule: 
-            start_time = event['start'].get('dateTime', event['start'].get('date'))
-            end_time = event['end'].get('dateTime', event['end'].get('date'))
-            event_summary = event['summary']
-            message = f"{start_time} - {end_time}: {event_summary}\n"
+          message = "Your schedule for today:\n"
+    for event in schedule: 
+        start_time = event['start'].get('dateTime', event['start'].get('date'))
+        end_time = event['end'].get('dateTime', event['end'].get('date'))
+        event_summary = event['summary']
+        message += f"{start_time} - {end_time}: {event_summary}\n"  # Use += to append
+
 
     message = client.messages.create(
         body=message,
@@ -113,8 +115,7 @@ def main():
    text_schedule(schedule)
 
 if __name__ == '__main__':
-    cal_service = get_google_calendar()
-    get_today_events(cal_service)
+    main()
     
 
     
