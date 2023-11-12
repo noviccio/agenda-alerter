@@ -4,7 +4,7 @@ A script I made for myself that automatically texts my daily schedule everyday! 
 
 ## Project Status
 
-As of now, the project does not run. I deactivated the instances and API's to save on costs. However, I have pictures of texts and documentation!
+As of now, the project does not run anymore. I deactivated the instances and API's to save on costs. However, I have pictures of texts and documentation!
 
 ## Project Screen Shot(s)
 Here are the texts:
