@@ -1,0 +1,31 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: Install Python and necessary packages
+      apt:
+        name:
+          - python3
+          - python3-pip
+        state: present
+
+    - name: Copy app.py to EC2 instance
+      copy:
+        src: /path/to/your/app.py
+        dest: /home/ubuntu/app.py
+
+    - name: Copy credentials.json to EC2 instance
+      copy:
+        src: /path/to/your/credentials.json
+        dest: /home/ubuntu/credentials.json
+
+    - name: Install Python dependencies
+      pip:
+        requirements: /path/to/your/requirements.txt
+
+    - name: Set up cron job for app.py
+      cron:
+        name: "Run app.py"
+        job: "python3 /home/ubuntu/app.py > /home/ubuntu/app.log 2>&1"
+        minute: "0"
+        hour: "9"
+        user: ubuntu
